@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("@openzeppelin/hardhat-upgrades");
 const { config } = require('dotenv');
 const { resolve } = require('path');
 
@@ -28,7 +29,7 @@ if (!process.env.MNEMONIC) {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.6.12",
+  solidity: "0.8.6",
   networks: {
     hardhat: {
     },
@@ -47,7 +48,7 @@ module.exports = {
     },
   },
   solidity: {
-    version: "0.6.12",
+    version: "0.8.6",
     settings: {
       optimizer: {
         enabled: true,

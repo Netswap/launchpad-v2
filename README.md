@@ -1,3 +1,2 @@
-# Netswap Launchpad - On progressing
+# Netswap Launchpad V2
 
-Launchpad contracts for Netswap built on Metis Layer2 Network
