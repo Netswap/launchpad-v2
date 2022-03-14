@@ -48,6 +48,8 @@ contract wNETTStaking is Initializable, OwnableUpgradeable {
 
     /// @dev Info of each user that stakes NETT
     mapping(address => UserInfo) public userInfo;
+    /// @dev Info of each user that claimed how much wNETT
+    mapping(address => uint256) public claimedWNETT;
 
     /// @notice Initialize with needed parameters
     /// @param _nett Address of the NETT token contract
@@ -115,7 +117,10 @@ contract wNETTStaking is Initializable, OwnableUpgradeable {
 
         if (_amount != 0)
             nett.safeTransferFrom(msg.sender, address(this), _amount);
-        if (pending != 0) _safeWNETTTransfer(msg.sender, pending);
+        if (pending != 0) {
+            _safeWNETTTransfer(msg.sender, pending);
+            claimedWNETT[msg.sender] = claimedWNETT[msg.sender] + pending;
+        }
         emit Deposit(msg.sender, _amount);
     }
 
@@ -137,7 +142,10 @@ contract wNETTStaking is Initializable, OwnableUpgradeable {
         user.amount -= _amount;
         user.rewardDebt = (user.amount * accWNETTPerShare) / PRECISION;
 
-        if (pending > 0) _safeWNETTTransfer(msg.sender, pending);
+        if (pending != 0) {
+            _safeWNETTTransfer(msg.sender, pending);
+            claimedWNETT[msg.sender] = claimedWNETT[msg.sender] + pending;
+        }
         totalNETTStaked -= _amount;
         nett.safeTransfer(msg.sender, _amount);
         emit Withdraw(msg.sender, _amount);
