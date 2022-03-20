@@ -17,4 +17,6 @@ interface IPadFactory {
     function feeCollector() external view returns (address);
     function multiplierFeeRate(uint256) external view returns (uint256);
     function multiplier() external view returns (Multiplier memory);
+    function numModels() external view returns (uint256 total, uint256 primary, uint256 unlimited);
+    function allUnlimitedModels(uint256 index) external view returns (address);
 }

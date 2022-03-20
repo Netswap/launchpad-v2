@@ -158,7 +158,8 @@ contract PadFactory is Initializable, OwnableUpgradeable {
         require(_issuedToken != address(0), "PadFactory: issued token can't be 0 address");
         require(_paymentToken != address(0), "PadFactory: payment token can't be 0 address");
         require(_issuedTokenAmount > 0, "PadFactory: issued token amount need to be greater than 0");
-        require(getModel[_issuedToken] == address(0), "PadFactory: token has already been issued");
+        // TODO for test
+        // require(getModel[_issuedToken] == address(0), "PadFactory: token has already been issued");
 
         address unlimitedModelEvent = Clones.clone(unlimitedImplementation);
 

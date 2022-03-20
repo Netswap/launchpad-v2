@@ -66,7 +66,7 @@ contract Unlimited {
     /// @dev paymentTokenReserve is the exact amount of paymentToken raised from users and needs to be kept inside the contract.
     /// If there is some excess (because someone sent token directly to the contract), the
     /// feeCollector can collect the excess using `skim()`
-    uint256 private paymentTokenReserve;
+    uint256 public paymentTokenReserve;
 
     mapping(address => UserInfo) public getUserInfo;
 
