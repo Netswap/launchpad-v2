@@ -1,11 +1,11 @@
 const hre = require("hardhat");
 const fs = require('fs');
-const wNETT_addr = require('./wNETT-588.json');
-const NETT_588 = '0x8127bd4C0e71d5B1f4B28788bb8C4708b51934F9'
+const wNETT_addr = require('./wNETT-mainnet.json');
+const NETT_MAINNET = '0x90fE084F877C65e1b577c7b2eA64B8D8dd1AB278'
 
 async function main() {
     const accounts = await ethers.getSigners();
-    const signer = accounts[1];
+    const signer = accounts[0];
     console.log('signer:', signer.address);
 
     const wNETTStakingFactory = await hre.ethers.getContractFactory('wNETTStaking');
@@ -13,20 +13,20 @@ async function main() {
 
     const wNETT = wNETTFactory.attach(wNETT_addr.wNETT);
 
-    const wNETTStaking = await hre.upgrades.deployProxy(
+    const wNETTStakingProxy = await hre.upgrades.deployProxy(
         wNETTStakingFactory, 
         [
-            NETT_588,
+            NETT_MAINNET,
             wNETT.address,
             '5000000000000000000',
-            Math.floor(Date.now() / 1000 + 60)
+            1647626400
         ]
     );
-    await wNETTStaking.deployed();
-    console.log("wNETTStaking depolyed to:", wNETTStaking.address);
+    await wNETTStakingProxy.deployed();
+    console.log("wNETTStakingProxy depolyed to:", wNETTStakingProxy.address);
 
     const addresses = {
-        wNETTStaking: wNETTStaking.address,
+        wNETTStakingProxy: wNETTStakingProxy.address,
     };
 
     console.log(addresses);
@@ -35,7 +35,7 @@ async function main() {
     await wNETT.connect(signer).transferOwnership(wNETTStaking.address);
     console.log('wNETT ownership transferred');
 
-    fs.writeFileSync(`${__dirname}/wNETTStaking-588.json`, JSON.stringify(addresses, null, 4));
+    fs.writeFileSync(`${__dirname}/wNETTStakingProxy-mainnet.json`, JSON.stringify(addresses, null, 4));
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -1,3 +1,4 @@
+require('metis-sourcecode-verify');
 require("@nomiclabs/hardhat-waffle");
 require("@openzeppelin/hardhat-upgrades");
 const { config } = require('dotenv');
@@ -29,7 +30,9 @@ if (!process.env.MNEMONIC) {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.8.6",
+  etherscan: {
+    apiKey: 'api-key',
+  },
   networks: {
     hardhat: {
     },

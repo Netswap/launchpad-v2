@@ -3,7 +3,7 @@ const fs = require('fs');
 
 async function main() {
     const accounts = await ethers.getSigners();
-    const signer = accounts[1];
+    const signer = accounts[0];
     console.log('signer:', signer.address);
 
     const wNETTFactory = await hre.ethers.getContractFactory('wNETT');
@@ -18,7 +18,7 @@ async function main() {
 
     console.log(addresses);
 
-    fs.writeFileSync(`${__dirname}/wNETT-588.json`, JSON.stringify(addresses, null, 4));
+    fs.writeFileSync(`${__dirname}/wNETT-mainnet.json`, JSON.stringify(addresses, null, 4));
 }
 
 // We recommend this pattern to be able to use async/await everywhere

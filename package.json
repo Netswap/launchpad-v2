@@ -28,5 +28,8 @@
     "ethereumjs-util": "^7.0.4",
     "ethers": "^5.3.1",
     "hardhat": "^2.6.6"
+  },
+  "dependencies": {
+    "metis-sourcecode-verify": "^0.0.3"
   }
 }
