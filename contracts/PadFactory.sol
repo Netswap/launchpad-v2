@@ -76,7 +76,6 @@ contract PadFactory is Initializable, OwnableUpgradeable {
     /// @param _depositDuration Timestamp of how long deposit phase will last for
     /// @param _launchTime Timestamp of when launch event will launch token
     /// @param _decimals Decimals of issuedToken
-    /// @param _isWhitelist If this launch event requires whitelist
     /// @return Address of primary model launch event contract
     function createNewPrimaryModel(
         address _issuer,
@@ -88,8 +87,7 @@ contract PadFactory is Initializable, OwnableUpgradeable {
         uint256 _depositStartTime,
         uint256 _depositDuration,
         uint256 _launchTime,
-        uint256 _decimals,
-        bool _isWhitelist
+        uint256 _decimals
     ) external onlyOwner returns(address) {
         require(_issuer != address(0), "PadFactory: issuer can't be 0 address");
         require(_issuedToken != address(0), "PadFactory: issued token can't be 0 address");
@@ -113,8 +111,7 @@ contract PadFactory is Initializable, OwnableUpgradeable {
             _depositStartTime, 
             _depositDuration, 
             _launchTime, 
-            _decimals, 
-            _isWhitelist
+            _decimals
         );
 
         emit NewPrimaryModelEventCreated(
@@ -123,8 +120,7 @@ contract PadFactory is Initializable, OwnableUpgradeable {
             _paymentToken,
             _depositStartTime,
             _depositDuration,
-            _launchTime,
-            _isWhitelist
+            _launchTime
         );
 
         return primaryModelEvent;
@@ -140,7 +136,6 @@ contract PadFactory is Initializable, OwnableUpgradeable {
     /// @param _depositDuration Timestamp of how long deposit phase will last for
     /// @param _launchTime Timestamp of when launch event will launch token
     /// @param _decimals Decimals of issuedToken
-    /// @param _isWhitelist If this launch event requires whitelist
     /// @return Address of primary model launch event contract
     function createNewUnlimitedModel(
         address _issuer,
@@ -151,8 +146,7 @@ contract PadFactory is Initializable, OwnableUpgradeable {
         uint256 _depositStartTime,
         uint256 _depositDuration,
         uint256 _launchTime,
-        uint256 _decimals,
-        bool _isWhitelist
+        uint256 _decimals
     ) external onlyOwner returns(address) {
         require(_issuer != address(0), "PadFactory: issuer can't be 0 address");
         require(_issuedToken != address(0), "PadFactory: issued token can't be 0 address");
@@ -176,8 +170,7 @@ contract PadFactory is Initializable, OwnableUpgradeable {
             _depositStartTime, 
             _depositDuration, 
             _launchTime, 
-            _decimals, 
-            _isWhitelist
+            _decimals
         );
 
         emit NewUnlimitedModelEventCreated(
@@ -186,8 +179,7 @@ contract PadFactory is Initializable, OwnableUpgradeable {
             _paymentToken,
             _depositStartTime,
             _depositDuration,
-            _launchTime,
-            _isWhitelist
+            _launchTime
         );
 
         return unlimitedModelEvent;
@@ -309,8 +301,7 @@ contract PadFactory is Initializable, OwnableUpgradeable {
         address indexed _paymentToken,
         uint256 _depositStartTime,
         uint256 _depositDuration,
-        uint256 _launchTime,
-        bool _isWhitelist
+        uint256 _launchTime
     );
     event NewUnlimitedModelEventCreated(
         address indexed unlimitedModelEvent, 
@@ -318,7 +309,6 @@ contract PadFactory is Initializable, OwnableUpgradeable {
         address indexed _paymentToken,
         uint256 _depositStartTime,
         uint256 _depositDuration,
-        uint256 _launchTime,
-        bool _isWhitelist
+        uint256 _launchTime
     );
 }

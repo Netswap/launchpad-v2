@@ -23,16 +23,17 @@ contract LaunchpadHelper {
         uint256 issuedTokenDecimals;
         uint256 paymentTokenReserve;
         uint256 userCount;
-        bool isWhitelist;
         IUnlimited.UserInfo userInfo;
     }
 
     IPadFactory public padFactory;
+    address public owner;
 
     /// @notice Create a new instance with required parameters
     /// @param _padFactory Address of the PadFactory
     constructor(address _padFactory) {
         padFactory = IPadFactory(_padFactory);
+        owner = msg.sender;
     }
 
     /// @notice Get all unlimited launch event data
@@ -129,7 +130,6 @@ contract LaunchpadHelper {
                issuedTokenDecimals: _unlimited.issuedTokenDecimals(),
                paymentTokenReserve: paymentTokenReserve,
                userCount: _unlimited.userCount(),
-               isWhitelist: _unlimited.isWhitelist(),
                userInfo: IUnlimited.UserInfo({
                     allocation: 0,
                     balance: 0,
@@ -137,6 +137,11 @@ contract LaunchpadHelper {
                     hasClaimedRefunds: false
                 })
             });
+    }
+
+    function setPadFactory(address _newFactory) external {
+        require(msg.sender == owner, "not owner");
+        padFactory = IPadFactory(_newFactory);
     }
 
 }

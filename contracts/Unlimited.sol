@@ -56,11 +56,12 @@ contract Unlimited {
     uint256 public issuedTokenDecimals;
     uint256 public paymentTokenDecimals;
     uint256 public PRICE_DECIMALS;
+    uint256 public accIssuerCharged;
     address[] public participants;
 
     IPadFactory public padFactory;
 
-    bool public isWhitelist;
+    bool public hasFeeCharged;
     bool public stopped;
 
     /// @dev paymentTokenReserve is the exact amount of paymentToken raised from users and needs to be kept inside the contract.
@@ -79,8 +80,7 @@ contract Unlimited {
         uint256 _depositStartTime, 
         uint256 _depositDuration, 
         uint256 _launchTime, 
-        uint256 _decimals, 
-        bool _isWhitelist
+        uint256 _decimals
     ) external atPhase(Phase.Prepare) {
         require(depositStart == 0, "Unlimited: already initialized");
 
@@ -108,7 +108,6 @@ contract Unlimited {
         issuedTokenDecimals = _decimals;
         paymentTokenDecimals = 1e6;
         PRICE_DECIMALS = 1e18;
-        isWhitelist = _isWhitelist;
         targetRaised = issuedTokenAmount.mul(price)
             .mul(paymentTokenDecimals)
             .div(issuedTokenDecimals)
@@ -304,6 +303,28 @@ contract Unlimited {
         }
     }
 
+    function chargeRaised(uint256 _amount) external isStopped(false) {
+        require(msg.sender == issuer, "Unlimited: only issuer can do this");
+        require(block.timestamp > launchTime, "Unlimited: token not launched yet");
+        (,uint256 issuerCharged,,) = getFundsDistribution();
+        require(_amount.add(accIssuerCharged) <= issuerCharged, "Unlimited: Overflow");
+        accIssuerCharged = _amount.add(accIssuerCharged);
+        _safeTransferPaymentToken(msg.sender, _amount);
+        emit IssuerChargedRaised(msg.sender, _amount, accIssuerCharged);
+    }
+
+    function chargeFees() external isStopped(false) {
+        require(
+            msg.sender == Ownable(address(padFactory)).owner(), 
+            "Unlimited: not padFactory owner"
+        );
+        require(!hasFeeCharged, "Unlimited: fees has been charged");
+        (,,uint256 fees,) = getFundsDistribution();
+        hasFeeCharged = true;
+        _safeTransferPaymentToken(msg.sender, fees);
+        emit FeeCharged(msg.sender, fees);
+    }
+
     /// @notice Withdraw payment token if launch has been cancelled
     function emergencyWithdraw() external isStopped(true) {
         UserInfo storage user = getUserInfo[msg.sender];
@@ -404,6 +425,7 @@ contract Unlimited {
 
     event PaymentTokenEmergencyWithdraw(address indexed user, uint256 amount);
 
-    event IssuedTokenEmergencyWithdraw(address indexed user, uint256 amount);
+    event IssuerChargedRaised(address indexed issuer, uint256 amount, uint256 accAmount);
 
+    event FeeCharged(address indexed user, uint256 fees);
 }

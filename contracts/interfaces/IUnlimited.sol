@@ -37,8 +37,6 @@ interface IUnlimited {
 
     function userCount() external view returns (uint256);
 
-    function isWhitelist() external view returns (bool);
-
     function paymentTokenReserve() external view returns (uint256);
 
     function getUserInfo(address _user) external view returns (UserInfo memory);
@@ -52,7 +50,6 @@ interface IUnlimited {
         uint256 _depositStartTime,
         uint256 _depositDuration,
         uint256 _launchTime,
-        uint256 _decimals,
-        bool _isWhitelist
+        uint256 _decimals
     ) external;
 }

@@ -12,7 +12,6 @@ interface IPrimary {
         uint256 _depositStartTime,
         uint256 _depositDuration,
         uint256 _launchTime,
-        uint256 _decimals,
-        bool _isWhitelist
+        uint256 _decimals
     ) external;
 }
