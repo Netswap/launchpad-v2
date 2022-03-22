@@ -41,6 +41,12 @@ interface IUnlimited {
 
     function getUserInfo(address _user) external view returns (UserInfo memory);
 
+    function minDeposit() external view returns (uint256);
+
+    function getUserAllocation(address _user) external view returns (uint256);
+
+    function getUserRefunds(address _user) external view returns (uint256);
+
     function initialize(
         address _issuer,
         address _issuedToken,
@@ -50,6 +56,7 @@ interface IUnlimited {
         uint256 _depositStartTime,
         uint256 _depositDuration,
         uint256 _launchTime,
-        uint256 _decimals
+        uint256 _decimals,
+        uint256 _minDeposit
     ) external;
 }

@@ -53,6 +53,8 @@ contract Unlimited {
     uint256 public issuedTokenAmount;
     /// @notice target raised amount of payment token
     uint256 public targetRaised;
+    /// @notice min deposit amount user invest from, scaled to 1e6
+    uint256 public minDeposit;
     uint256 public issuedTokenDecimals;
     uint256 public paymentTokenDecimals;
     uint256 public PRICE_DECIMALS;
@@ -80,7 +82,8 @@ contract Unlimited {
         uint256 _depositStartTime, 
         uint256 _depositDuration, 
         uint256 _launchTime, 
-        uint256 _decimals
+        uint256 _decimals,
+        uint256 _minDeposit
     ) external atPhase(Phase.Prepare) {
         require(depositStart == 0, "Unlimited: already initialized");
 
@@ -112,6 +115,7 @@ contract Unlimited {
             .mul(paymentTokenDecimals)
             .div(issuedTokenDecimals)
             .div(PRICE_DECIMALS);
+        minDeposit = _minDeposit;
 
         emit UnlimitedEventInitialized(
             issuedTokenAmount,
@@ -121,7 +125,7 @@ contract Unlimited {
     }
 
     /// @notice Deposits payment token and burns wNETT
-    function depoist(uint256 amount) 
+    function deposit(uint256 amount) 
         external 
         isStopped(false) 
         atPhase(Phase.Deposit) 
@@ -132,6 +136,13 @@ contract Unlimited {
         );
 
         UserInfo storage user = getUserInfo[msg.sender];
+
+        // first deposit
+        if (user.balance == 0) {
+            require(amount >= minDeposit, "Unlimited: must reach min deposit");
+            participants.push(msg.sender);
+        }
+
         uint256 newBalance = user.balance + amount;
 
         uint256 wNETTNeeded = getWNETTNeeded(amount);
@@ -142,10 +153,6 @@ contract Unlimited {
 
         if(wNETTNeeded > 0) {
             wNETT.burnFrom(msg.sender, wNETTNeeded);
-        }
-
-        if (user.balance == 0) {
-            participants.push(msg.sender);
         }
 
         paymentToken.transferFrom(msg.sender, address(this), amount);
@@ -232,6 +239,10 @@ contract Unlimited {
     }
 
     function getUserAllocation(address _user) public view returns (uint256) {
+        // // only calculate after depositing
+        // if (currentPhase() == Phase.Prepare || currentPhase() == Phase.Deposit) {
+        //     return 0;
+        // }
         UserInfo storage user = getUserInfo[_user];
         (,uint256 issuerCharged,,) = getFundsDistribution();
         uint256 actualSaledTokenAmount = issuedTokenAmount.mul(issuerCharged).div(targetRaised);
@@ -240,6 +251,10 @@ contract Unlimited {
     }
 
     function getUserRefunds(address _user) public view returns (uint256) {
+        // // only calculate after depositing
+        // if (currentPhase() == Phase.Prepare || currentPhase() == Phase.Deposit) {
+        //     return 0;
+        // }
         UserInfo storage user = getUserInfo[_user];
         (,,, uint256 refunds) = getFundsDistribution();
         uint256 userRefunds = 0;
@@ -318,6 +333,7 @@ contract Unlimited {
             msg.sender == Ownable(address(padFactory)).owner(), 
             "Unlimited: not padFactory owner"
         );
+        require(block.timestamp > launchTime, "Unlimited: token not launched yet");
         require(!hasFeeCharged, "Unlimited: fees has been charged");
         (,,uint256 fees,) = getFundsDistribution();
         hasFeeCharged = true;

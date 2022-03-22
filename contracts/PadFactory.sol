@@ -146,14 +146,14 @@ contract PadFactory is Initializable, OwnableUpgradeable {
         uint256 _depositStartTime,
         uint256 _depositDuration,
         uint256 _launchTime,
-        uint256 _decimals
+        uint256 _decimals,
+        uint256 _minDeposit
     ) external onlyOwner returns(address) {
         require(_issuer != address(0), "PadFactory: issuer can't be 0 address");
         require(_issuedToken != address(0), "PadFactory: issued token can't be 0 address");
         require(_paymentToken != address(0), "PadFactory: payment token can't be 0 address");
         require(_issuedTokenAmount > 0, "PadFactory: issued token amount need to be greater than 0");
-        // TODO for test
-        // require(getModel[_issuedToken] == address(0), "PadFactory: token has already been issued");
+        require(getModel[_issuedToken] == address(0), "PadFactory: token has already been issued");
 
         address unlimitedModelEvent = Clones.clone(unlimitedImplementation);
 
@@ -170,7 +170,8 @@ contract PadFactory is Initializable, OwnableUpgradeable {
             _depositStartTime, 
             _depositDuration, 
             _launchTime, 
-            _decimals
+            _decimals,
+            _minDeposit
         );
 
         emit NewUnlimitedModelEventCreated(

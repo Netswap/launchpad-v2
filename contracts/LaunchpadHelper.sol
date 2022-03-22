@@ -23,6 +23,7 @@ contract LaunchpadHelper {
         uint256 issuedTokenDecimals;
         uint256 paymentTokenReserve;
         uint256 userCount;
+        uint256 minDeposit;
         IUnlimited.UserInfo userInfo;
     }
 
@@ -105,6 +106,8 @@ contract LaunchpadHelper {
             _unlimited
         );
         unlimitedEventData.userInfo = _unlimited.getUserInfo(_user);
+        unlimitedEventData.userInfo.allocation = _unlimited.getUserAllocation(_user);
+        unlimitedEventData.userInfo.refunds = _unlimited.getUserRefunds(_user);
         return unlimitedEventData;
     }
 
@@ -130,6 +133,7 @@ contract LaunchpadHelper {
                issuedTokenDecimals: _unlimited.issuedTokenDecimals(),
                paymentTokenReserve: paymentTokenReserve,
                userCount: _unlimited.userCount(),
+               minDeposit: _unlimited.minDeposit(),
                userInfo: IUnlimited.UserInfo({
                     allocation: 0,
                     balance: 0,
