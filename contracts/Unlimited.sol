@@ -166,6 +166,7 @@ contract Unlimited {
             "Unlimited: Wrong phase"
         );
         UserInfo storage user = getUserInfo[msg.sender];
+        require(!user.hasClaimedRefunds, "Unlimited: already claimed refunds");
         uint256 refundsAmount = getUserRefunds(msg.sender);
         user.refunds = refundsAmount;
         user.hasClaimedRefunds = true;
@@ -239,22 +240,14 @@ contract Unlimited {
     }
 
     function getUserAllocation(address _user) public view returns (uint256) {
-        // // only calculate after depositing
-        // if (currentPhase() == Phase.Prepare || currentPhase() == Phase.Deposit) {
-        //     return 0;
-        // }
         UserInfo storage user = getUserInfo[_user];
         (,uint256 issuerCharged,,) = getFundsDistribution();
         uint256 actualSaledTokenAmount = issuedTokenAmount.mul(issuerCharged).div(targetRaised);
-        uint256 userAllocation = actualSaledTokenAmount.mul(user.balance).div(paymentTokenReserve);
+        uint256 userAllocation = paymentTokenReserve > 0 ? actualSaledTokenAmount.mul(user.balance).div(paymentTokenReserve) : 0;
         return userAllocation;
     }
 
     function getUserRefunds(address _user) public view returns (uint256) {
-        // // only calculate after depositing
-        // if (currentPhase() == Phase.Prepare || currentPhase() == Phase.Deposit) {
-        //     return 0;
-        // }
         UserInfo storage user = getUserInfo[_user];
         (,,, uint256 refunds) = getFundsDistribution();
         uint256 userRefunds = 0;
@@ -411,11 +404,12 @@ contract Unlimited {
     /// @param _value The amount of payment token to send
     /// @dev Will revert on failure
     function _safeTransferPaymentToken(address _to, uint256 _value) internal {
-        require(
-            paymentToken.balanceOf(address(this)) >= paymentTokenReserve,
-            "Unlimited: not enough payment token"
-        );
-        paymentToken.transfer(_to, _value);
+        uint256 paymentBal = paymentToken.balanceOf(address(this));
+        if (_value > paymentBal) {
+            paymentToken.transfer(_to, paymentBal);
+        } else {
+            paymentToken.transfer(_to, _value);
+        }
     }
 
     /* ========== EVENTS ========== */

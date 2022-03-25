@@ -23,6 +23,8 @@ contract PadFactory is Initializable, OwnableUpgradeable {
     // issued token => model address
     mapping(address => address) public getModel;
     mapping(address => bool) public isModel;
+    mapping(address => bool) public isPrimary;
+    mapping(address => bool) public isUnlimited;
     // fee rates of unlimited model
     mapping(uint256 => uint256) public multiplierFeeRate;
     address[] public allPrimaryModels;
@@ -99,6 +101,7 @@ contract PadFactory is Initializable, OwnableUpgradeable {
 
         getModel[_issuedToken] = primaryModelEvent;
         isModel[primaryModelEvent] = true;
+        isPrimary[primaryModelEvent] = true;
         allPrimaryModels.push(primaryModelEvent);
 
         IPrimary(primaryModelEvent).initialize(
@@ -159,6 +162,7 @@ contract PadFactory is Initializable, OwnableUpgradeable {
 
         getModel[_issuedToken] = unlimitedModelEvent;
         isModel[unlimitedModelEvent] = true;
+        isUnlimited[unlimitedModelEvent] = true;
         allUnlimitedModels.push(unlimitedModelEvent);
 
         IUnlimited(unlimitedModelEvent).initialize(
