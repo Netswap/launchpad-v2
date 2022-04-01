@@ -311,9 +311,8 @@ contract Unlimited {
         }
     }
 
-    function chargeRaised(uint256 _amount) external isStopped(false) {
+    function chargeRaised(uint256 _amount) external atPhase(Phase.SaleEnded) isStopped(false) {
         require(msg.sender == issuer, "Unlimited: only issuer can do this");
-        require(block.timestamp > launchTime, "Unlimited: token not launched yet");
         (,uint256 issuerCharged,,) = getFundsDistribution();
         require(_amount.add(accIssuerCharged) <= issuerCharged, "Unlimited: Overflow");
         accIssuerCharged = _amount.add(accIssuerCharged);
@@ -321,12 +320,11 @@ contract Unlimited {
         emit IssuerChargedRaised(msg.sender, _amount, accIssuerCharged);
     }
 
-    function chargeFees() external isStopped(false) {
+    function chargeFees() external atPhase(Phase.SaleEnded) isStopped(false) {
         require(
             msg.sender == Ownable(address(padFactory)).owner(), 
             "Unlimited: not padFactory owner"
         );
-        require(block.timestamp > launchTime, "Unlimited: token not launched yet");
         require(!hasFeeCharged, "Unlimited: fees has been charged");
         (,,uint256 fees,) = getFundsDistribution();
         hasFeeCharged = true;
@@ -359,6 +357,24 @@ contract Unlimited {
         );
         stopped = true;
         emit Stopped();
+    }
+
+    function updateDepositDuration(uint256 _newDuration) atPhase(Phase.Deposit) external {
+        require(
+            msg.sender == Ownable(address(padFactory)).owner(),
+            "Unlimited: caller is not PadFactory owner"
+        );
+        require(depositStart + _newDuration > block.timestamp, "invalid");
+        DEPOSIT_DURATION = _newDuration;
+    }
+
+    function updateLaunchTime(uint256 _newLaunchTime) atPhase(Phase.SaleEnded) external {
+        require(
+            msg.sender == Ownable(address(padFactory)).owner(),
+            "Unlimited: caller is not PadFactory owner"
+        );
+        require(_newLaunchTime > block.timestamp, "invalid");
+        launchTime = _newLaunchTime;
     }
 
     /* ========== MODIFIER ========== */
