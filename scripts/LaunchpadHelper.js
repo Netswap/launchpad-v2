@@ -24,7 +24,7 @@ async function main() {
 
     console.log(addresses);
 
-    fs.writeFileSync(`${__dirname}/LaunchpadHelper-588.json`, JSON.stringify(addresses, null, 4));
+    fs.writeFileSync(`${__dirname}/LaunchpadHelper-599.json`, JSON.stringify(addresses, null, 4));
 }
 
 // We recommend this pattern to be able to use async/await everywhere

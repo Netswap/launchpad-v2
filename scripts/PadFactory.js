@@ -1,9 +1,9 @@
 const hre = require("hardhat");
 const fs = require('fs');
-const unlimited = require('./Unlimited-588.json');
-const wNETT = require('./wNETT-588.json');
-const wNETTStaking = require('./wNETTStaking-588.json');
-const helper = require('./LaunchpadHelper-588.json');
+const unlimited = require('./Unlimited-599.json');
+const wNETT = require('./wNETT-599.json');
+const wNETTStaking = require('./wNETTStakingProxy-599.json');
+const helper = require('./LaunchpadHelper-599.json');
 
 async function main() {
     const accounts = await ethers.getSigners();
@@ -14,7 +14,7 @@ async function main() {
     const wNETTStakingFactory = await hre.ethers.getContractFactory('wNETTStaking');
     const helperFactory = await hre.ethers.getContractFactory('LaunchpadHelper');
 
-    const wNETTStakingProxy = wNETTStakingFactory.attach(wNETTStaking.wNETTStaking);
+    const wNETTStakingProxy = wNETTStakingFactory.attach(wNETTStaking.wNETTStakingProxy);
     const LaunchpadHelper = helperFactory.attach(helper.launchpadHelper);
 
     const PadFactoryProxy = await hre.upgrades.deployProxy(
@@ -35,7 +35,7 @@ async function main() {
 
     console.log(addresses);
 
-    fs.writeFileSync(`${__dirname}/PadFactoryProxy-588.json`, JSON.stringify(addresses, null, 4));
+    fs.writeFileSync(`${__dirname}/PadFactoryProxy-599.json`, JSON.stringify(addresses, null, 4));
 
     // set pad factory address for wNETTStaking
     console.log('=== setting up PadFactory for wNETTStaking ===');

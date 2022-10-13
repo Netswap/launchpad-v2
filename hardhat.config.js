@@ -43,7 +43,7 @@ module.exports = {
       }
     },
     testnet: {
-      url: 'https://stardust.metis.io/?owner=588',
+      url: 'https://goerli.gateway.metisdevops.link',
       accounts: {
         mnemonic,
       },

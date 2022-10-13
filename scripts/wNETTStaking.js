@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 const fs = require('fs');
-const wNETT_addr = require('./wNETT-mainnet.json');
-const NETT_MAINNET = '0x90fE084F877C65e1b577c7b2eA64B8D8dd1AB278'
+const wNETT_addr = require('./wNETT-599.json');
+const NETT_MAINNET = '0xA49efFF1961C0aF60519887E390e9954952176f8'
 
 async function main() {
     const accounts = await ethers.getSigners();
@@ -19,7 +19,7 @@ async function main() {
             NETT_MAINNET,
             wNETT.address,
             '5000000000000000000',
-            1647626400
+            Math.round(Date.now() / 1000)
         ]
     );
     await wNETTStakingProxy.deployed();
@@ -32,10 +32,10 @@ async function main() {
     console.log(addresses);
 
     // transfer wNETT owner to wNETTStaking
-    await wNETT.connect(signer).transferOwnership(wNETTStaking.address);
+    await wNETT.connect(signer).transferOwnership(wNETTStakingProxy.address);
     console.log('wNETT ownership transferred');
 
-    fs.writeFileSync(`${__dirname}/wNETTStakingProxy-mainnet.json`, JSON.stringify(addresses, null, 4));
+    fs.writeFileSync(`${__dirname}/wNETTStakingProxy-599.json`, JSON.stringify(addresses, null, 4));
 }
 
 // We recommend this pattern to be able to use async/await everywhere

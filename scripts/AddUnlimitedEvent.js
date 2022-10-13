@@ -1,8 +1,8 @@
 const hre = require("hardhat");
-const PadFactory = require('./PadFactoryProxy-588.json');
-const helper = require('./LaunchpadHelper-588.json');
-const TUSDC = '0x48c754c7A6ED973FB10d04aDbb15C91BC704F72A'
-const TEST = '0xA4757cE0da4B94876E5d506AE6F8fCA76ef25130';
+const PadFactory = require('./PadFactoryProxy-599.json');
+const helper = require('./LaunchpadHelper-599.json');
+const TUSDC = '0x4D0D58a7AD8223E6d5F983A8cDeB1E354ED0ced9'
+const TEST = '0xE5991f3b3D468e6C904f56a4d9C0613c3e3aB4dB';
 
 async function main() {
     const accounts = await ethers.getSigners();
